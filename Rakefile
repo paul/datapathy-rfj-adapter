@@ -9,6 +9,7 @@ begin
     gem.email = "psadauskas@gmail.com"
     gem.homepage = "http://github.com/paul/datapathy-ssbe-adapter"
     gem.authors = ["Paul Sadauskas"]
+    gem.version = "0.1.0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
 
