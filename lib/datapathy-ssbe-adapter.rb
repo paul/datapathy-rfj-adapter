@@ -1,7 +1,9 @@
 require 'resourceful'
 require 'json'
+require 'active_support/core_ext/hash/keys'
 
 require 'ssbe_authenticator'
+require 'identifiers'
 
 require 'ssbe_model'
 
@@ -26,13 +28,24 @@ module Datapathy::Adapters
       @http.add_authenticator Resourceful::SsbeAuthenticator.new(@user, @password)
     end
 
+    def create(resources)
+      resources.each do |resource|
+        http_resource = http_resource_for(resource)
+        record = serialize(resource)
+        content_type = ServiceIdentifiers[resource.model.service_type].mime_type
+
+        http_resource.put(record, "Content-Type" => content_type)
+      end
+    end
+
     def read(query)
       if query.key_lookup?
         response = http.resource(query.key, default_headers).get
         query.filter_records([deserialize(response)])
       else
-        response = resource_for(query).get
-        records = deserialize(response)['items']
+        response = http_resource_for(query).get
+        records = deserialize(response)[:items]
+        records.map! { |r| r.symbolize_keys! }
         query.filter_records(records)
       end
     end
@@ -40,18 +53,29 @@ module Datapathy::Adapters
     protected 
 
     def deserialize(response)
-      JSON.parse(response.body.gsub('\/', '/'))
+      JSON.parse(response.body.gsub('\/', '/')).symbolize_keys
     end
 
-    def resource_for(query)
-      model = query.model
-      url = if query.respond_to?(:location) && location = query.location
+    def serialize(resource)
+      JSON.generate(resource.persisted_attributes)
+    end
+
+    def http_resource_for(query_or_resource)
+      model = query_or_resource.model
+
+      if query_or_resource.is_a?(Datapathy::Query)
+        query = query_or_resource
+      else
+        resource = query_or_resource
+      end
+
+      url = if query && query.respond_to?(:location) && location = query.location
               location
             elsif model == ServiceDescriptor
               services_uri
             else
-              service_desc = ServiceDescriptor[model.service_type.to_s]
-              resource_desc = service_desc.resource_for(model.resource_name.to_s)
+              service_desc = ServiceDescriptor[model.service_type]
+              resource_desc = service_desc.resource_for(model.resource_name)
               resource_desc.href
             end
 
