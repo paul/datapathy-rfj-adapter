@@ -15,7 +15,7 @@ module Resourceful
 
     def update_credentials(challenge_response)
       @domain = Addressable::URI.parse(challenge_response.uri).host
-      @challenge = HTTPAuth::Digest::Challenge.from_header(challenge_response.header['WWW-Authenticate'].first)
+      @challenge = HTTPAuth::Digest::Challenge.from_header(challenge_response.header['WWW-Authenticate'].join(", "))
     end
 
     def valid_for?(challenge_response)
@@ -25,7 +25,8 @@ module Resourceful
       rescue HTTPAuth::UnwellformedHeader
         return false
       end
-      challenge.realm == @realm
+      #challenge.realm == @realm
+      true
     end
 
     def can_handle?(request)
