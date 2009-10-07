@@ -24,6 +24,7 @@ module Datapathy::Adapters
 
       @http = Resourceful::HttpAccessor.new
       @http.logger = Resourceful::StdOutLogger.new if @options[:logging]
+      @http.logger = @options[:logger] if @options[:logger]
       @http.cache_manager = Resourceful::InMemoryCacheManager.new
       @http.add_authenticator Resourceful::SsbeAuthenticator.new(@user, @password)
     end
@@ -34,7 +35,12 @@ module Datapathy::Adapters
         record = serialize(resource)
         content_type = ServiceIdentifiers[resource.model.service_type].mime_type
 
-        http_resource.put(record, "Content-Type" => content_type)
+        begin
+          response = http_resource.post(record, "Content-Type" => content_type)
+          resource.merge!(deserialize(response))
+        rescue Resourceful::UnsuccessfulHttpRequestError => e
+          puts "ERRORS! #{e.inspect}"
+        end
       end
     end
 
@@ -57,7 +63,9 @@ module Datapathy::Adapters
     end
 
     def serialize(resource)
-      JSON.generate(resource.persisted_attributes)
+      attrs = resource.persisted_attributes.dup
+      attrs.delete_if { |k,v| v.nil? }
+      JSON.fast_generate(attrs)
     end
 
     def http_resource_for(query_or_resource)

@@ -43,6 +43,14 @@ class SsbeModel
     :href
   end
 
+  def self.primary_key
+    self.key
+  end
+
+  def save!
+    save
+  end
+
 end
 
 module SsbeConsole
