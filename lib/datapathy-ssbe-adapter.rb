@@ -30,16 +30,23 @@ module Datapathy::Adapters
     end
 
     def create(resources)
+      if resources.is_a?(Datapathy::Collection)
+        query = resources.query
+      end
+
       resources.each do |resource|
-        http_resource = http_resource_for(resource)
+        http_resource = http_resource_for(query || resource)
         record = serialize(resource)
         content_type = ServiceIdentifiers[resource.model.service_type].mime_type
 
         begin
           response = http_resource.post(record, "Content-Type" => content_type)
-          resource.merge!(deserialize(response))
+          resource.key = response.header['Location']
+          resource.merge!(deserialize(response)) unless response.body.blank?
         rescue Resourceful::UnsuccessfulHttpRequestError => e
-          puts "ERRORS! #{e.inspect}"
+          # TODO check for invalid record, and populate errors
+          #puts "ERRORS! #{e.inspect}"
+          raise e
         end
       end
     end

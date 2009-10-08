@@ -1,3 +1,4 @@
+require 'addressable/template'
 
 class SsbeModel
   include Datapathy::Model
@@ -33,9 +34,9 @@ class SsbeModel
   end
 
   # Get a collection from a location other than the default
-  def self.from(href)
+  def self.from(href, mappings = {})
     query = SsbeConsole::SsbeQuery.new(model)
-    query.location = href
+    query.location = Addressable::Template.new(href).expand(mappings.stringify_keys).to_str
     Datapathy::Collection.new(query)
   end
 
