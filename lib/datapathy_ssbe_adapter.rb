@@ -2,13 +2,15 @@ require 'resourceful'
 require 'json'
 require 'active_support/core_ext/hash/keys'
 
-require 'ssbe_authenticator'
-require 'identifiers'
+$:.unshift(File.expand_path(File.dirname(__FILE__))) unless
+  $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
 
-require 'ssbe_model'
+require 'resourceful/ssbe_authenticator'
 
-require 'service_descriptor'
-require 'resource_descriptor'
+require 'datapathy_ssbe_adapter/ssbe_model'
+
+require 'models/service_descriptor'
+require 'models/resource_descriptor'
 
 module Datapathy::Adapters
 
@@ -23,7 +25,6 @@ module Datapathy::Adapters
       @user, @password = options[:user], options[:password]
 
       @http = Resourceful::HttpAccessor.new
-      @http.logger = Resourceful::StdOutLogger.new if @options[:logging]
       @http.logger = @options[:logger] if @options[:logger]
       @http.cache_manager = Resourceful::InMemoryCacheManager.new
       @http.add_authenticator Resourceful::SsbeAuthenticator.new(@user, @password)
