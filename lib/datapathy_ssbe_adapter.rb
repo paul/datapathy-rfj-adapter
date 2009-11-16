@@ -15,19 +15,19 @@ require 'models/resource_descriptor'
 module Datapathy::Adapters
 
   class SsbeAdapter < Datapathy::Adapters::AbstractAdapter
-      
+
     attr_reader :http, :backend
 
     def initialize(options = {})
       super
 
-      @backend = options[:backend]
-      @user, @password = options[:user], options[:password]
+      @backend = @options[:backend]
+      @username, @password = @options[:username], @options[:password]
 
       @http = Resourceful::HttpAccessor.new
       @http.logger = @options[:logger] if @options[:logger]
       @http.cache_manager = Resourceful::InMemoryCacheManager.new
-      @http.add_authenticator Resourceful::SsbeAuthenticator.new(@user, @password)
+      @http.add_authenticator Resourceful::SsbeAuthenticator.new(@username, @password)
     end
 
     def create(resources)
@@ -38,7 +38,7 @@ module Datapathy::Adapters
       resources.each do |resource|
         http_resource = http_resource_for(query || resource)
         record = serialize(resource)
-        content_type = ServiceIdentifiers[resource.model.service_type].mime_type
+        content_type = ServiceDescriptor::ServiceIdentifiers[resource.model.service_type].mime_type
 
         begin
           response = http_resource.post(record, "Content-Type" => content_type)
@@ -46,7 +46,7 @@ module Datapathy::Adapters
           resource.merge!(deserialize(response)) unless response.body.blank?
         rescue Resourceful::UnsuccessfulHttpRequestError => e
           # TODO check for invalid record, and populate errors
-          #puts "ERRORS! #{e.inspect}"
+          #pp JSON.parse(e.http_response.body)
           raise e
         end
       end
@@ -64,7 +64,11 @@ module Datapathy::Adapters
       end
     end
 
-    protected 
+    def services_uri
+      @services_uri ||= "http://core.#{backend}/service_descriptors"
+    end
+
+    protected
 
     def deserialize(response)
       JSON.parse(response.body.gsub('\/', '/')).symbolize_keys
@@ -100,14 +104,10 @@ module Datapathy::Adapters
       http.resource(url, default_headers)
     end
 
-    def default_headers 
+    def default_headers
       @default_headers ||= {
         :accept => 'application/vnd.absperf.sskj1+json; q=0.8, application/vnd.absperf.ssmj1+json; q=0.8, application/vnd.absperf.ssej1+json; q=0.8, application/vnd.absperf.sscj1+json; q=0.8'
       }
-    end
-
-    def services_uri
-      @services_uri ||= "http://core.#{backend}/service_descriptors"
     end
 
   end
