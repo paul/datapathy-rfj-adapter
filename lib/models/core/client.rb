@@ -1,4 +1,3 @@
-
 class Client < SsbeModel
 
   service_type :kernel
@@ -10,7 +9,7 @@ class Client < SsbeModel
     self.detect { |c| c.name == name }
   end
 
-  API = self["API"]
+  #API = self["API"]
 
   def hosts
     Host.from(hosts_href)
