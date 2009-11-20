@@ -12,4 +12,8 @@ class MetricFilter < SsbeModel
   def client
     @client ||= Client.at(@client_href) if @client_href
   end
+
+  def criteria
+    @criteria || []
+  end
 end
