@@ -16,4 +16,14 @@ class MetricFilter < SsbeModel
   def criteria
     @criteria || []
   end
+
+  def self.targets
+    targets = JSON.parse(targets_json).with_indifferent_access[:items]
+  end
+
+  def self.targets_json
+    url = ServiceDescriptor[:measurements].resource_for("AllMetricFilterTargets").href
+    response = Datapathy.default_adapter.http.resource(url).get(:accept => ServiceDescriptor::ServiceIdentifiers[:measurements].mime_type)
+    response.body
+  end
 end
