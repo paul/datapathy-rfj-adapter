@@ -13,12 +13,24 @@ class MetricFilter < SsbeModel
     @client ||= Client.at(@client_href) if @client_href
   end
 
+  def any?
+    any_or_all == "any"
+  end
+
+  def all?
+    !any?
+  end
+
   def criteria
-    @criteria || []
+    @criteria ||= []
+  end
+
+  def criteria_attributes=(attributes)
+    self.criteria = attributes.values
   end
 
   def self.targets
-    targets = JSON.parse(targets_json).with_indifferent_access[:items]
+    @targets ||= JSON.parse(targets_json).with_indifferent_access[:items]
   end
 
   def self.targets_json

@@ -55,7 +55,7 @@ module Datapathy::Adapters
     def read(query)
       if query.key_lookup?
         response = http.resource(query.key, default_headers).get
-        query.filter_records([deserialize(response)])
+        Array.wrap(deserialize(response))
       else
         response = http_resource_for(query).get
         records = deserialize(response)[:items]

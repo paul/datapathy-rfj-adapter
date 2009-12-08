@@ -6,7 +6,7 @@ class Address < SsbeModel
   persists :name, :identifier, :delivery_method, :account_href
 
   def account
-    Account.at(account_href)
+    Account.at(account_href) if account_href
   end
 
   def account=(account)

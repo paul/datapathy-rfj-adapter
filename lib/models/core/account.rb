@@ -1,5 +1,6 @@
 
 class Account < SsbeModel
+
   service_type :kernel
   resource_name :AllAccounts
 
@@ -21,7 +22,7 @@ class Account < SsbeModel
   end
 
   def md5_auth_credentials
-    @md5_auth_credentials ||= 
+    @md5_auth_credentials ||=
       Datapathy.default_adapter.http.
         resource(authentication_credentials_href).
         get(:accept => 'application/prs.md5-hexdigest-auth-creds').body
@@ -30,10 +31,12 @@ class Account < SsbeModel
   def has_privilege_at?(privilege, client)
     clients_by_privilege(privilege).include?(client)
   end
+  memoize :has_privilege_at?
 
   def clients_by_privilege(privilege)
     Client.from(clients_by_privilege_href, :privilege_href => privilege.href)
   end
+  memoize :clients_by_privilege
 
   def addresses
     Address.from(addresses_href)
