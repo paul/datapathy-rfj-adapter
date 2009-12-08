@@ -28,8 +28,12 @@ class Account < SsbeModel
         get(:accept => 'application/prs.md5-hexdigest-auth-creds').body
   end
 
-  def has_privilege_at?(privilege, client)
-    clients_by_privilege(privilege).include?(client)
+  def has_privilege_at?(privilege, client_or_href)
+    if client_or_href.is_a?(Client)
+      clients_by_privilege(privilege).include?(client_or_href)
+    else
+      clients_by_privilege(privilege).map(&:href).include?(client_or_href)
+    end
   end
   memoize :has_privilege_at?
 
