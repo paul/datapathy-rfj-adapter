@@ -5,7 +5,7 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "datapathy-ssbe-adapter"
-    gem.summary = %Q{TODO}
+    gem.summary = "Datapath adapter for ssbe web services"
     gem.email = "psadauskas@gmail.com"
     gem.homepage = "http://github.com/paul/datapathy-ssbe-adapter"
     gem.authors = ["Paul Sadauskas"]
