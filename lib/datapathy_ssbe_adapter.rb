@@ -9,8 +9,8 @@ require 'resourceful/ssbe_authenticator'
 
 require 'datapathy_ssbe_adapter/ssbe_model'
 
-require 'models/service_descriptor'
-require 'models/resource_descriptor'
+require 'datapathy_ssbe_adapter/models/service_descriptor'
+require 'datapathy_ssbe_adapter/models/resource_descriptor'
 
 module Datapathy::Adapters
 
