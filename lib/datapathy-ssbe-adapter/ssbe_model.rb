@@ -1,8 +1,11 @@
 require 'addressable/template'
 require 'active_support/concern'
 
+require 'datapathy-ssbe-adapter/access_control'
+
 class SsbeModel
   include Datapathy::Model
+  include AccessControl
 
   def self.inherited(model)
     model.persists :_type, :href, :id, :created_at, :updated_at
@@ -52,6 +55,10 @@ class SsbeModel
 
     def primary_key
       self.key
+    end
+
+    def adapter
+      Datapathy.adapters[:ssbe]
     end
 
   end

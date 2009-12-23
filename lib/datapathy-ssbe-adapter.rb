@@ -1,3 +1,4 @@
+require 'datapathy'
 require 'resourceful'
 require 'json'
 require 'active_support/core_ext/hash/keys'
@@ -7,10 +8,10 @@ $:.unshift(File.expand_path(File.dirname(__FILE__))) unless
 
 require 'resourceful/ssbe_authenticator'
 
-require 'datapathy_ssbe_adapter/ssbe_model'
+require 'datapathy-ssbe-adapter/ssbe_model'
 
-require 'datapathy_ssbe_adapter/models/service_descriptor'
-require 'datapathy_ssbe_adapter/models/resource_descriptor'
+require 'datapathy-ssbe-adapter/models/service_descriptor'
+require 'datapathy-ssbe-adapter/models/resource_descriptor'
 
 module Datapathy::Adapters
 
@@ -30,12 +31,10 @@ module Datapathy::Adapters
       @http.add_authenticator Resourceful::SsbeAuthenticator.new(@username, @password)
     end
 
-    def create(resources)
-      if resources.is_a?(Datapathy::Collection)
-        query = resources.query
-      end
+    def create(collection)
+      query = collection.query
 
-      resources.each do |resource|
+      collection.each do |resource|
         http_resource = http_resource_for(query || resource)
         record = serialize(resource)
         content_type = ServiceDescriptor::ServiceIdentifiers[resource.model.service_type].mime_type
@@ -52,7 +51,8 @@ module Datapathy::Adapters
       end
     end
 
-    def read(query)
+    def read(collection)
+      query = collection.query
       if query.key_lookup?
         response = http.resource(query.key, default_headers).get
         Array.wrap(deserialize(response))
@@ -60,7 +60,7 @@ module Datapathy::Adapters
         response = http_resource_for(query).get
         records = deserialize(response)[:items]
         records.map! { |r| r.symbolize_keys! }
-        query.filter_records(records)
+        records
       end
     end
 
