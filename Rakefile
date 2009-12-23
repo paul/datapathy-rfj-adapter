@@ -9,8 +9,12 @@ begin
     gem.email = "psadauskas@gmail.com"
     gem.homepage = "http://github.com/paul/datapathy-ssbe-adapter"
     gem.authors = ["Paul Sadauskas"]
-    gem.version = "0.1.5"
+    gem.version = "0.5.0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+    gem.add_dependency "resourceful"
+    gem.add_dependency "datapathy"
+    gem.add_dependency "json"
+    gem.add_dependency "httpauth"
   end
 
 rescue LoadError
