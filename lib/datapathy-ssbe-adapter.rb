@@ -44,9 +44,14 @@ module Datapathy::Adapters
           resource.key = response.header['Location']
           resource.merge!(deserialize(response)) unless response.body.blank?
         rescue Resourceful::UnsuccessfulHttpRequestError => e
-          # TODO check for invalid record, and populate errors
-          #pp JSON.parse(e.http_response.body)
-          raise e
+          if e.http_response.code == 403
+            errors =  deserialize(e.http_response)[:errors]
+            errors.each do |field, messages|
+              resource.errors[field].push *messages
+            end
+          else
+            raise e
+          end
         end
       end
     end
@@ -106,7 +111,7 @@ module Datapathy::Adapters
 
     def default_headers
       @default_headers ||= {
-        :accept => 'application/vnd.absperf.sskj1+json; q=0.8, application/vnd.absperf.ssmj1+json; q=0.8, application/vnd.absperf.ssej1+json; q=0.8, application/vnd.absperf.sscj1+json; q=0.8'
+        :accept => 'application/vnd.absperf.sskj1+json, application/vnd.absperf.ssmj1+json, application/vnd.absperf.ssej1+json, application/vnd.absperf.sscj1+json'
       }
     end
 
