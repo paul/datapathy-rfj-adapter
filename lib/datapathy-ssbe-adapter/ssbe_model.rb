@@ -44,7 +44,7 @@ class SsbeModel
 
     # Get a collection from a location other than the default
     def from(href, mappings = {})
-      query = SsbeConsole::SsbeQuery.new(model)
+      query = SsbeQuery.new(model)
       query.location = Addressable::Template.new(href).expand(mappings.stringify_keys).to_str
       Datapathy::Collection.new(query)
     end
@@ -65,13 +65,11 @@ class SsbeModel
 
 end
 
-module SsbeConsole
-  class SsbeQuery < Datapathy::Query
-    def location
-      @location
-    end
-    def location=(href)
-      @location = href
-    end
+class SsbeQuery < Datapathy::Query
+  def location
+    @location
+  end
+  def location=(href)
+    @location = href
   end
 end

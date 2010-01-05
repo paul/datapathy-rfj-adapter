@@ -33,9 +33,9 @@ module Datapathy::Adapters
 
     def create(collection)
       query = collection.query
+      http_resource = http_resource_for(query)
 
       collection.each do |resource|
-        http_resource = http_resource_for(query || resource)
         record = serialize(resource)
         content_type = ServiceDescriptor::ServiceIdentifiers[resource.model.service_type].mime_type
 
@@ -85,16 +85,10 @@ module Datapathy::Adapters
       JSON.fast_generate(attrs)
     end
 
-    def http_resource_for(query_or_resource)
-      model = query_or_resource.model
+    def http_resource_for(query)
+      model = query.model
 
-      if query_or_resource.is_a?(Datapathy::Query)
-        query = query_or_resource
-      else
-        resource = query_or_resource
-      end
-
-      url = if query && query.respond_to?(:location) && location = query.location
+      url = if query.respond_to?(:location) && location = query.location
               location
             elsif model == ServiceDescriptor
               services_uri
