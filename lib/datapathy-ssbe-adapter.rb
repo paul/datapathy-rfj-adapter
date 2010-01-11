@@ -37,7 +37,7 @@ module Datapathy::Adapters
 
       collection.each do |resource|
         record = serialize(resource)
-        content_type = ServiceDescriptor::ServiceIdentifiers[resource.model.service_type].mime_type
+        content_type = content_type_for(resource)
 
         begin
           response = http_resource.post(record, "Content-Type" => content_type)
@@ -45,10 +45,7 @@ module Datapathy::Adapters
           resource.merge!(deserialize(response)) unless response.body.blank?
         rescue Resourceful::UnsuccessfulHttpRequestError => e
           if e.http_response.code == 403
-            errors =  deserialize(e.http_response)[:errors]
-            errors.each do |field, messages|
-              resource.errors[field].push *messages
-            end
+            set_errors(resource, e)
           else
             raise e
           end
@@ -69,6 +66,24 @@ module Datapathy::Adapters
       end
     end
 
+    def update(attributes, collection)
+      collection.each do |resource|
+        content = serialize(resource, attributes)
+        content_type = content_type_for(resource)
+
+        begin
+          response = http.resource(resource.href, default_headers).put(content, "Content-Type" => content_type)
+          resource.merge!(deserialize(response)) unless response.body.blank?
+        rescue Resourceful::UnsuccessfulHttpRequestError => e
+          if e.http_response.code == 403
+            set_errors(resource, e)
+          else
+            raise e
+          end
+        end
+      end
+    end
+
     def services_uri
       @services_uri ||= "http://core.#{backend}/service_descriptors"
     end
@@ -79,8 +94,8 @@ module Datapathy::Adapters
       JSON.parse(response.body.gsub('\/', '/')).symbolize_keys
     end
 
-    def serialize(resource)
-      attrs = resource.persisted_attributes.dup
+    def serialize(resource, attrs_for_update = {})
+      attrs = resource.persisted_attributes.dup.merge(attrs_for_update)
       attrs.delete_if { |k,v| v.nil? }
       JSON.fast_generate(attrs)
     end
@@ -102,6 +117,18 @@ module Datapathy::Adapters
 
       http.resource(url, default_headers)
     end
+
+    def content_type_for(resource)
+      ServiceDescriptor::ServiceIdentifiers[resource.model.service_type].mime_type
+    end
+
+    def set_errors(resource, exception)
+      errors =  deserialize(exception.http_response)[:errors]
+      errors.each do |field, messages|
+        resource.errors[field].push *messages
+      end
+    end
+
 
     def default_headers
       @default_headers ||= {
