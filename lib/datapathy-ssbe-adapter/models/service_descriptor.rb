@@ -25,6 +25,12 @@ class ServiceDescriptor < SsbeModel
     resources.detect { |r| r.name == resource_name.to_s }
   end
 
+  def self.register(name, href)
+    service_type = ServiceIdentifiers[name].service_type
+    create(:service_type => service_type,
+           :href         => href)
+  end
+
   protected
 
   def identifier
@@ -53,8 +59,13 @@ class ServiceDescriptor < SsbeModel
       ),
       ServiceIdentifier.new(
         :name =>          :escalations,
-        :service_type =>  "http://systemshepherd.com/services/escalations",
-        :mime_type =>     "application/vnd.absperf.ssej1+json"
+        :service_type =>  "http://systemshepherd.com/services/escdef",
+        :mime_type =>     "application/vnd.absperf.ssj1+json"
+      ),
+      ServiceIdentifier.new(
+        :name =>          :escalations,
+        :service_type =>  "http://systemshepherd.com/services/issues",
+        :mime_type =>     "application/vnd.absperf.ssj1+json"
       ),
       ServiceIdentifier.new(
         :name =>          :configurator,

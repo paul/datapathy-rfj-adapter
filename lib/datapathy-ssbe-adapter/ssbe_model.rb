@@ -1,6 +1,5 @@
 require 'addressable/template'
 require 'active_support/concern'
-
 require 'datapathy-ssbe-adapter/access_control'
 
 class SsbeModel
