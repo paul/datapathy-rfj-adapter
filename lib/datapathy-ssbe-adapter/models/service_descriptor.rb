@@ -1,4 +1,5 @@
 class ServiceDescriptor < SsbeModel
+  service_type :kernel
 
   persists :service_type
 
@@ -58,12 +59,12 @@ class ServiceDescriptor < SsbeModel
         :mime_type =>     "application/vnd.absperf.ssmj1+json"
       ),
       ServiceIdentifier.new(
-        :name =>          :escalations,
+        :name =>          :escdef,
         :service_type =>  "http://systemshepherd.com/services/escdef",
         :mime_type =>     "application/vnd.absperf.ssj1+json"
       ),
       ServiceIdentifier.new(
-        :name =>          :escalations,
+        :name =>          :issues,
         :service_type =>  "http://systemshepherd.com/services/issues",
         :mime_type =>     "application/vnd.absperf.ssj1+json"
       ),
