@@ -57,25 +57,25 @@ module AccessControl
 
   end
 
-  if defined?(ActiveRecord)
-    module ActiveRecordFinders
+  module ActiveRecordFinders
 
-      def find_every_with_visible_to(options)
-        account = options.delete(:visible_to) if options.has_key?(:visible_to)
-        records = find_every_without_visible_to(options)
-        records = records.select { |r| r.visible_to?(account) } if account
-        records
-      end
+    def find_every_with_visible_to(options)
+      account = options.delete(:visible_to) if options.has_key?(:visible_to)
+      records = find_every_without_visible_to(options)
+      records = records.select { |r| r.visible_to?(account) } if account
+      records
+    end
 
-      module ActiveRecord::SpawnMethods
+    module ActiveRecord
+      module SpawnMethods
         VALID_FIND_OPTIONS << :visible_to
       end
+    end
 
-      #ActiveRecord::Calculations::CALCULATIONS_OPTIONS << :visible_to
+    #ActiveRecord::Calculations::CALCULATIONS_OPTIONS << :visible_to
 
-      def self.extended(ar)
-        (class << ar; self; end).alias_method_chain :find_every, :visible_to
+    def self.extended(ar)
+      (class << ar; self; end).alias_method_chain :find_every, :visible_to
     end
   end
-end
 end
