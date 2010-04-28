@@ -6,7 +6,7 @@ module AccessControl
 
     model.extend(ClassMethods)
     #model.extend(ActiveRecordFinders) if model.superclass == ActiveRecord::Base
-    ActiveRecord::Relation.send(:include, VisibleToRelation)
+    ActiveRecord::Relation.send(:include, VisibleToRelation) if defined?(ActiveRecord)
   end
 
   module InstanceMethods
@@ -57,25 +57,25 @@ module AccessControl
 
   end
 
-  module ActiveRecordFinders
+  if defined?(ActiveRecord)
+    module ActiveRecordFinders
 
-    def find_every_with_visible_to(options)
-      account = options.delete(:visible_to) if options.has_key?(:visible_to)
-      records = find_every_without_visible_to(options)
-      records = records.select { |r| r.visible_to?(account) } if account
-      records
-    end
+      def find_every_with_visible_to(options)
+        account = options.delete(:visible_to) if options.has_key?(:visible_to)
+        records = find_every_without_visible_to(options)
+        records = records.select { |r| r.visible_to?(account) } if account
+        records
+      end
 
-    module ActiveRecord
-      module SpawnMethods
+      module ActiveRecord::SpawnMethods
         VALID_FIND_OPTIONS << :visible_to
       end
-    end
 
-    #ActiveRecord::Calculations::CALCULATIONS_OPTIONS << :visible_to
+      #ActiveRecord::Calculations::CALCULATIONS_OPTIONS << :visible_to
 
-    def self.extended(ar)
-      (class << ar; self; end).alias_method_chain :find_every, :visible_to
+      def self.extended(ar)
+        (class << ar; self; end).alias_method_chain :find_every, :visible_to
+      end
     end
   end
 end
