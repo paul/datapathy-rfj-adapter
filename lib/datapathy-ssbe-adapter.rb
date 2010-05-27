@@ -85,7 +85,7 @@ module Datapathy::Adapters
     end
 
     def services_uri
-      @services_uri ||= "https://core.#{backend}/service_descriptors"
+      @services_uri ||= "http://core.#{backend}/service_descriptors"
     end
 
     protected
