@@ -97,7 +97,7 @@ module Datapathy::Adapters
     def serialize(resource, attrs_for_update = {})
       attrs = resource.persisted_attributes.dup.merge(attrs_for_update)
       attrs.delete_if { |k,v| v.nil? }
-      JSON.fast_generate(attrs)
+      Yajl::Encoder.encode(attrs)
     end
 
     def http_resource_for(query)
