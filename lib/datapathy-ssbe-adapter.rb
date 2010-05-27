@@ -17,12 +17,12 @@ module Datapathy::Adapters
 
   class SsbeAdapter < Datapathy::Adapters::AbstractAdapter
 
-    attr_reader :http, :backend
+    attr_reader :http, :services_uri
 
     def initialize(options = {})
       super
 
-      @backend = @options[:backend]
+      @services_uri = @options[:services_uri]
       @username, @password = @options[:username], @options[:password]
 
       @http = Resourceful::HttpAccessor.new
@@ -84,8 +84,8 @@ module Datapathy::Adapters
       end
     end
 
-    def services_uri
-      @services_uri ||= "http://core.#{backend}/service_descriptors"
+    def backend
+      backend ||= Addressable::URI.parse(services_uri).split('.', 2).last
     end
 
     protected
