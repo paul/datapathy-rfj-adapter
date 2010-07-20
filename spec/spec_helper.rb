@@ -7,7 +7,7 @@ $LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__), '../../res
 
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-require 'datapathy-ssbe-adapter'
+require 'datapathy-rfj-adapter'
 
 require 'pp'
 
@@ -27,11 +27,11 @@ module Helpers
 end
 
 opts = {
-  :backend => 'ssbe.localhost',
+  :backend => 'rfj.localhost',
   :username => 'dev',
   :password => 'dev'
 }
-Datapathy.adapters[:ssbe] = Datapathy::Adapters::SsbeAdapter.new(opts)
+Datapathy.adapters[:rfj] = Datapathy::Adapters::RfjAdapter.new(opts)
 
 Spec::Runner.configure do |config|
 

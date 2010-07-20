@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe "Updating" do
   before do
     @client = Client.create(:name => "test#{Time.now.to_f.to_s.gsub('.', '')}",
-                            :longname => "Testing Datapathy-SSBE-Adapter",
+                            :longname => "Testing Datapathy-RFJ-Adapter",
                             :parent_href => Client.find_by_name("API").href)
   end
 

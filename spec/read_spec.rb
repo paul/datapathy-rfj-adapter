@@ -9,13 +9,13 @@ describe "Reading" do
   end
 
   it 'should work from a single href' do
-    @client = Client.at('http://core.ssbe.localhost/clients/API')
+    @client = Client.at('http://core.rfj.localhost/clients/API')
     @client.should be_a(Client)
     @client.name.should == "API"
   end
 
   it 'should work from a collection href' do
-    @hosts = Host.from("http://core.ssbe.localhost/clients/API/hosts")
+    @hosts = Host.from("http://core.rfj.localhost/clients/API/hosts")
     @hosts.should be_a(Datapathy::Collection)
     @hosts.to_a
   end

@@ -1,8 +1,8 @@
 require 'addressable/template'
 require 'active_support/concern'
-require 'datapathy-ssbe-adapter/access_control'
+require 'datapathy-rfj-adapter/access_control'
 
-class SsbeModel
+class RfjModel
   include Datapathy::Model
   include AccessControl
 
@@ -43,7 +43,7 @@ class SsbeModel
 
     # Get a collection from a location other than the default
     def from(href, mappings = {})
-      query = SsbeQuery.new(model)
+      query = RfjQuery.new(model)
       query.location = Addressable::Template.new(href).expand(mappings.stringify_keys).to_str
       Datapathy::Collection.new(query)
     end
@@ -57,14 +57,14 @@ class SsbeModel
     end
 
     def adapter
-      Datapathy.adapters[:ssbe]
+      Datapathy.adapters[:rfj]
     end
 
   end
 
 end
 
-class SsbeQuery < Datapathy::Query
+class RfjQuery < Datapathy::Query
   def location
     @location
   end

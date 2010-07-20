@@ -1,4 +1,4 @@
-class Client < SsbeModel
+class Client < RfjModel
 
   service_type :kernel
   resource_name :AllClients
@@ -15,7 +15,7 @@ class Client < SsbeModel
 
 end
 
-class Host < SsbeModel
+class Host < RfjModel
   service_type :kernel
 
   service_type :measurements

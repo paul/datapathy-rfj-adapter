@@ -6,16 +6,16 @@ require 'active_support/core_ext/hash/keys'
 $:.unshift(File.expand_path(File.dirname(__FILE__))) unless
   $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
 
-require 'resourceful/ssbe_authenticator'
+require 'resourceful/rfj_authenticator'
 
-require 'datapathy-ssbe-adapter/ssbe_model'
+require 'datapathy-rfj-adapter/rfj_model'
 
-require 'datapathy-ssbe-adapter/models/service_descriptor'
-require 'datapathy-ssbe-adapter/models/resource_descriptor'
+require 'datapathy-rfj-adapter/models/service_descriptor'
+require 'datapathy-rfj-adapter/models/resource_descriptor'
 
 module Datapathy::Adapters
 
-  class SsbeAdapter < Datapathy::Adapters::AbstractAdapter
+  class RfjAdapter < Datapathy::Adapters::AbstractAdapter
 
     attr_reader :http, :backend
 
@@ -28,7 +28,7 @@ module Datapathy::Adapters
       @http = Resourceful::HttpAccessor.new
       @http.logger = @options[:logger] if @options[:logger]
       @http.cache_manager = Resourceful::InMemoryCacheManager.new
-      @http.add_authenticator Resourceful::SsbeAuthenticator.new(@username, @password)
+      @http.add_authenticator Resourceful::RfjAuthenticator.new(@username, @password)
     end
 
     def create(collection)

@@ -4,10 +4,10 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = "datapathy-ssbe-adapter"
-    gem.summary = "Datapath adapter for ssbe web services"
+    gem.name = "datapathy-rfj-adapter"
+    gem.summary = "Datapath adapter for rfj web services"
     gem.email = "psadauskas@gmail.com"
-    gem.homepage = "http://github.com/paul/datapathy-ssbe-adapter"
+    gem.homepage = "http://github.com/paul/datapathy-rfj-adapter"
     gem.authors = ["Paul Sadauskas"]
     gem.version = "0.5.0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
@@ -46,7 +46,7 @@ Rake::RDocTask.new do |rdoc|
   end
 
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "datapathy-ssbe-adapter #{version}"
+  rdoc.title = "datapathy-rfj-adapter #{version}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
